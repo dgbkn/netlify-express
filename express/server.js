@@ -273,7 +273,8 @@ router.get('/seedr/getall', async function(req, res){
 
 
 
-
+app.use('/.netlify/functions/server', router);  // path must route to lambda
+app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 
 
 
