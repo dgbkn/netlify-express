@@ -14,6 +14,15 @@ var axios = require("axios");
 var FormData = require('form-data');
 
 
+const formidable = require('express-formidable');
+
+//googleapis
+const { google } = require("googleapis");
+const { promisfy, waitFor } = require('promisfy');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+
+const creds = require('./keys.json');
+
 var key = 'somebodysomewhereanddevlol';
 
 
@@ -57,7 +66,7 @@ router.get('/', (req, res) => {
 
 
 
-app.get('/api', (req, res) => {
+router.get('/api', (req, res) => {
     try {
 
         if (req.query.name) {
@@ -75,7 +84,7 @@ app.get('/api', (req, res) => {
 
 
 
-app.get('/voesx', async function(req, res) {
+router.get('/voesx', async function(req, res) {
     try {
         var uri = req.query.url; // $_GET["id"]
 
@@ -95,7 +104,7 @@ app.get('/voesx', async function(req, res) {
 
 
 
-app.get("/mailru", async function(req, res) {
+router.get("/mailru", async function(req, res) {
     var axios = require("axios");
 
     try {
@@ -123,7 +132,7 @@ app.get("/mailru", async function(req, res) {
 
 
 
-app.get("/mailrumultim3u8", async function(req, res) {
+router.get("/mailrumultim3u8", async function(req, res) {
     try {
         var uri = req.query.url; // $_GET["id"]
         var data = await getHTML(uri);
@@ -166,7 +175,7 @@ app.get("/mailrumultim3u8", async function(req, res) {
     }
 });
 
-app.get("/mailrusinglem3u8", async function(req, res) {
+router.get("/mailrusinglem3u8", async function(req, res) {
     try {
         var uri = req.query.url; // $_GET["id"]
         var data = await getHTML(uri);
@@ -215,7 +224,7 @@ app.get("/mailrusinglem3u8", async function(req, res) {
 
 
 ///n3u8
-app.get('/multim3u8', async function(req, res) {
+router.get('/multim3u8', async function(req, res) {
     try {
         var uri = req.query.url; // $_GET["id"]
         var data = await getHTML(uri);
@@ -256,7 +265,7 @@ app.get('/multim3u8', async function(req, res) {
     }
 })
 
-app.get('/singlem3u8', async function(req, res) {
+router.get('/singlem3u8', async function(req, res) {
     try {
         var uri = req.query.url; // $_GET["id"]
         var data = await getHTML(uri);
@@ -315,7 +324,7 @@ let getHTML = async (url) => {
 
 
 
-app.get('/encrypt', (req, res) => {
+router.get('/encrypt', (req, res) => {
     try {
         var user = req.query.user // $_GET["id"]
         var pass = req.query.pass // $_GET["id"]
@@ -336,7 +345,7 @@ app.get('/encrypt', (req, res) => {
 
 
 
-// app.get('/decrypt', (req, res) => {
+// router.get('/decrypt', (req, res) => {
 //   try {
 //     var hash = req.query.hash; // $_GET["id"]
 //     var objDec = encryptor.decrypt(hash);
@@ -349,7 +358,7 @@ app.get('/encrypt', (req, res) => {
 
 
 
-app.get('/vidsrcstream', (req, res) => {
+router.get('/vidsrcstream', (req, res) => {
     var uri = req.query.id // $_GET["id"]
     var index = req.query.index
     try {
@@ -387,7 +396,7 @@ app.get('/vidsrcstream', (req, res) => {
     }
 })
 
-app.get('/fembedstream', (req, res) => {
+router.get('/fembedstream', (req, res) => {
     var uri = req.query.id // $_GET["id"]
     var index = req.query.index
     try {
@@ -425,7 +434,7 @@ app.get('/fembedstream', (req, res) => {
     }
 })
 
-app.get('/fembed', (req, res) => {
+router.get('/fembed', (req, res) => {
     var uri = req.query.id // $_GET["id"]
     try {
         request.post(
@@ -655,7 +664,7 @@ let addMagnet = async (link, user, pass) => {
     //
 }
 
-app.get('/seedr/get', async function(req, res) {
+router.get('/seedr/get', async function(req, res) {
     // const user = req.query.user
     // const pass = req.query.pass
     //s
@@ -680,7 +689,7 @@ app.get('/seedr/get', async function(req, res) {
     }
 })
 
-app.get('/seedr/download', async function(req, res) {
+router.get('/seedr/download', async function(req, res) {
     try {
         const id = req.query.id
         // const user = req.query.user
@@ -787,7 +796,7 @@ body{
     }
 })
 
-app.get('/seedr/deletefolder', async function(req, res) {
+router.get('/seedr/deletefolder', async function(req, res) {
     try {
         // const user = req.query.user
         // const pass = req.query.pass
@@ -818,7 +827,7 @@ app.get('/seedr/deletefolder', async function(req, res) {
 
 
 
-app.get('/seedr/getToken', async function(req, res) {
+router.get('/seedr/getToken', async function(req, res) {
     try {
         var hash = req.query.hash // $_GET["id"]
         const fid = req.query.fid
@@ -844,7 +853,7 @@ app.get('/seedr/getToken', async function(req, res) {
     }
 });
 
-app.get('/seedr/getCurrentStatus', async function(req, res) {
+router.get('/seedr/getCurrentStatus', async function(req, res) {
     try {
         var hash = req.query.hash // $_GET["id"]
         const fid = req.query.fid
@@ -873,7 +882,7 @@ app.get('/seedr/getCurrentStatus', async function(req, res) {
 
 
 
-app.get('/seedr/magnet', async function(req, res) {
+router.get('/seedr/magnet', async function(req, res) {
     try {
         // const user = req.query.user
         // const pass = req.query.pass
@@ -899,7 +908,7 @@ app.get('/seedr/magnet', async function(req, res) {
     }
 })
 
-app.get('/seedr/subtitles', async function(req, res) {
+router.get('/seedr/subtitles', async function(req, res) {
     try {
         // const user = req.query.user
         // const pass = req.query.pass
@@ -940,7 +949,7 @@ app.get('/seedr/subtitles', async function(req, res) {
     }
 })
 
-app.get('/seedr/seeAllCurrentFiles',async function(req, res) {
+router.get('/seedr/seeAllCurrentFiles',async function(req, res) {
     try {
     var html= '';
       var cars = await getall('anandrambkn@gmail.com','@Anu2240013');
@@ -1011,7 +1020,7 @@ ${html}
 
 });
 
-app.get('/seedr/stream', async function(req, res) {
+router.get('/seedr/stream', async function(req, res) {
     try {
         // const user = req.query.user
         // const pass = req.query.pass
@@ -1141,7 +1150,7 @@ app.get('/seedr/stream', async function(req, res) {
     }
 })
 
-app.get('/seedr/getall', async function(req, res) {
+router.get('/seedr/getall', async function(req, res) {
     try {
         // const user = req.query.user
         // const pass = req.query.pass
@@ -1183,7 +1192,7 @@ let getsettings = async (user, pass) => {
     //
 }
 
-app.get('/seedr/getsettings', async function(req, res) {
+router.get('/seedr/getsettings', async function(req, res) {
     try {
         // const user = req.query.user
         // const pass = req.query.pass
@@ -1209,7 +1218,7 @@ app.get('/seedr/getsettings', async function(req, res) {
     }
 })
 
-app.get('/seedr/play', async function(req, res) {
+router.get('/seedr/play', async function(req, res) {
     try {
         const id = req.query.id
 
@@ -1345,7 +1354,7 @@ app.get('/seedr/play', async function(req, res) {
 
 //new seedr
 
-app.get('/seedr/getfolders', async function(req, res) {
+router.get('/seedr/getfolders', async function(req, res) {
     try {
         // const user = req.query.user
         // const pass = req.query.pass
@@ -1379,7 +1388,7 @@ app.get('/seedr/getfolders', async function(req, res) {
     }
 })
 
-app.get('/seedr/getband', async function(req, res) {
+router.get('/seedr/getband', async function(req, res) {
     try {
         // const user = req.query.user
         // const pass = req.query.pass
@@ -1413,7 +1422,7 @@ app.get('/seedr/getband', async function(req, res) {
     }
 })
 
-app.get('/seedr/deletefile', async function(req, res) {
+router.get('/seedr/deletefile', async function(req, res) {
     try {
         // const user = req.query.user
         // const pass = req.query.pass
@@ -1448,7 +1457,7 @@ app.get('/seedr/deletefile', async function(req, res) {
     }
 })
 
-app.get('/seedr/search', async function(req, res) {
+router.get('/seedr/search', async function(req, res) {
     try {
         // const user = req.query.user
         // const pass = req.query.pass
@@ -1483,7 +1492,7 @@ app.get('/seedr/search', async function(req, res) {
     }
 })
 
-app.get('/seedr/getinside', async function(req, res) {
+router.get('/seedr/getinside', async function(req, res) {
     try {
         // const user = req.query.user
         // const pass = req.query.pass
@@ -1520,7 +1529,7 @@ app.get('/seedr/getinside', async function(req, res) {
 
 //new seedr
 
-app.get('/video', function(req, res) {
+router.get('/video', function(req, res) {
     const path = 'assets/sample.mp4'
     const stat = fs.statSync(path)
     const fileSize = stat.size
