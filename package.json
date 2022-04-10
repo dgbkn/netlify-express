@@ -34,7 +34,6 @@
     "express-formidable": "^1.2.0",
     "google-spreadsheet": "^3.2.0",
     "googleapis": "^97.0.0",
-    "nodemon": "^2.0.15",
     "promisfy": "^1.2.0"
   }
 }
